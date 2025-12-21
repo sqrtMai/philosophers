@@ -3,9 +3,10 @@
 void init_forks_to_zero(t_table *table)
 {
 	int i;
-
+	int len;
 	i = 0;
-	while (i < (sizeof(table->fork) / sizeof(int)))
+	len = table->rules.number_of_philosophers;
+	while (i < len)
 		table->fork[i++] = 0;
 }
 
@@ -25,9 +26,15 @@ t_table *init_table(int argc, char **argv)
 	}
 	table->has_someone_died = 0;
 	table->update_time = 0;
-	table->fork = malloc(sizeof(int) * table->rules.number_of_philosophers);
+	table->time = 0;
+	table->start_time = 0;
+	if (table->rules.number_of_philosophers == 1)
+		table->fork = malloc(sizeof(int) * (table->rules.number_of_philosophers + 1));
+	else
+		table->fork = malloc(sizeof(int) * table->rules.number_of_philosophers);
 	if (!table->fork)
 		return NULL;
+	//memset(table->fork, 0, sizeof(int) * table->rules.number_of_philosophers);
 	init_forks_to_zero(table);
 	return table;
 }
@@ -37,7 +44,6 @@ void init_philo_to_null(t_philo *philo)
 	philo->next = NULL;
 	philo->table = NULL;
 	philo->last_meal = 0;
-	philo->thread = 0;
 }
 
 t_philo *init_philosophers(t_table *table)
@@ -47,24 +53,27 @@ t_philo *init_philosophers(t_table *table)
 	t_philo *head;
 
 	i = 0;
+	philo = malloc(sizeof(t_philo));
 	while (i < table->rules.number_of_philosophers)
 	{
-		philo = malloc(sizeof(t_philo));
 		init_philo_to_null(philo);
+		philo->table = table;
 		if (i == 0)
 		{
 			head = philo;
-			philo->fork1 = philo->table->fork[philo->table->rules.number_of_philosophers - 1];
-			philo->fork2 = philo->table->fork[0];
+			philo->fork1 = &philo->table->fork[philo->table->rules.number_of_philosophers];
+			philo->fork2 = &philo->table->fork[0];
 		}
 		else
 		{
-			philo->fork1 = philo->table->fork[i - 1];
-			philo->fork2 = philo->table->fork[i];
+			philo->fork1 = &philo->table->fork[i - 1];
+			philo->fork2 = &philo->table->fork[i];
 		}
-		philo->table = table;
-		philo = philo->next;
+		// pthread_mutex_init(philo->fork1, NULL);
+		// pthread_mutex_init(philo->fork2, NULL);
 		philo->index = i++;
+		philo->next = malloc(sizeof(t_philo));
+		philo = philo->next;
 	}
 	return head;
 }

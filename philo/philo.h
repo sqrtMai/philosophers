@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
-
+#include <string.h>
 
 typedef struct s_rules
 {
@@ -22,27 +22,29 @@ typedef struct s_table
 {
 	int				*fork;
 	int				has_someone_died;
-	pthread_t		update_time;
 	t_rules 		rules;
-	int				start_time;
+	long long		start_time;
+	long long		time;
+	pthread_t		update_time;
 	struct timeval	current_time;
 }		t_table;
 
 typedef struct s_philo
 {
 	pthread_t		thread;
-	int				last_meal;
+	pthread_t		death;
+	long	long	last_meal;
 	int				*fork1;
 	int				*fork2;
-	t_table			*table;
 	int				index;
+	t_table			*table;
 	struct s_philo *next;
 }	t_philo;
 
 
 t_philo *init_data(int argc, char **argv);
 int	ft_atoi(char *str);
-void *update_time(void *args);
-void *set_death_lol(void *args);
-void *print_time_lol(void *tabl);
+void *update_time(void *tabl);
+void *take_forks(void *philos);
+void *check_death(void *philos);
 #endif

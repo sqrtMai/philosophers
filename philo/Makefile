@@ -1,6 +1,6 @@
 NAME = philo
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -pthread
+CFLAGS = -g -O0 -Wall -Wextra -Werror -pthread
 AR = ar rcs
 RM = rm -f
 
