@@ -26,17 +26,19 @@ typedef struct s_table
 	long long		start_time;
 	long long		time;
 	pthread_t		update_time;
-	struct timeval	current_time;
+	pthread_t		death;
+	pthread_mutex_t fork_lock;
 }		t_table;
 
 typedef struct s_philo
 {
 	pthread_t		thread;
-	pthread_t		death;
-	long	long	last_meal;
+
+	long long		last_meal;
 	int				*fork1;
 	int				*fork2;
 	int				index;
+	int				dead;
 	t_table			*table;
 	struct s_philo *next;
 }	t_philo;
@@ -47,4 +49,5 @@ int	ft_atoi(char *str);
 void *update_time(void *tabl);
 void *take_forks(void *philos);
 void *check_death(void *philos);
+long long get_current_time(void);
 #endif

@@ -1,3 +1,5 @@
+#include "philo.h"
+
 static int	is_space(char c)
 {
 	if (c == ' ' || c == '\t' || c == '\n' || c == '\v'
@@ -29,4 +31,12 @@ int	ft_atoi(char *str)
 		i++;
 	}
 	return (result * is_negative);
+}
+
+
+long long get_current_time(void)
+{
+	struct timeval	current_time;
+	gettimeofday(&current_time, NULL);
+	return (current_time.tv_sec * 1000LL) + (current_time.tv_usec / 1000);
 }

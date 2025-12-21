@@ -24,10 +24,10 @@ t_table *init_table(int argc, char **argv)
 		table->rules.number_of_each_time = ft_atoi(argv[5]);
 		table->rules.six_args = 1;
 	}
-	table->has_someone_died = 0;
 	table->update_time = 0;
 	table->time = 0;
 	table->start_time = 0;
+	table->has_someone_died = 0;
 	if (table->rules.number_of_philosophers == 1)
 		table->fork = malloc(sizeof(int) * (table->rules.number_of_philosophers + 1));
 	else
@@ -44,6 +44,7 @@ void init_philo_to_null(t_philo *philo)
 	philo->next = NULL;
 	philo->table = NULL;
 	philo->last_meal = 0;
+	philo->dead = 0;
 }
 
 t_philo *init_philosophers(t_table *table)
@@ -69,12 +70,14 @@ t_philo *init_philosophers(t_table *table)
 			philo->fork1 = &philo->table->fork[i - 1];
 			philo->fork2 = &philo->table->fork[i];
 		}
-		// pthread_mutex_init(philo->fork1, NULL);
-		// pthread_mutex_init(philo->fork2, NULL);
 		philo->index = i++;
-		philo->next = malloc(sizeof(t_philo));
-		philo = philo->next;
+		if (i < table->rules.number_of_philosophers)
+		{
+			philo->next = malloc(sizeof(t_philo));
+			philo = philo->next;
+		}
 	}
+	philo->next = head;
 	return head;
 }
 

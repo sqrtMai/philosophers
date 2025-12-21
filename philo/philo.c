@@ -27,14 +27,19 @@ int check_args(char **argv)
 void init_threads(t_philo *philo)
 {
 
-	pthread_create(&philo->table->update_time,
-		NULL, update_time, philo->table);
-	while (philo)
+	int i;
+
+	i = 0;
+	pthread_create(&philo->table->death, NULL, check_death, philo);
+	pthread_mutex_init(&philo->table->fork_lock, NULL);
+	while (i < philo->table->rules.number_of_philosophers)
 	{
+		if ((i + 1) % 2 == 1)
+			usleep(5000);
 		pthread_create(&philo->thread,
 			NULL, take_forks, philo);
-		pthread_create(&philo->death, NULL, check_death, philo);
 		philo = philo->next;
+		i++;
 	}
 }
 
@@ -47,7 +52,13 @@ int main(int argc, char **argv)
 	// if (check_args(argv))
 	// 	return (printf("error"), 1);
 	philosophers = init_data(argc, argv);
+	// while (1)
+	// {
+	// 	printf("%d\n", philosophers->index);
+	// 	philosophers = philosophers->next;
+	// }
+
 	init_threads(philosophers);
-	pthread_join(philosophers->table->update_time, NULL);
+	pthread_join(philosophers->table->death, NULL);
 	return 0;
 }
