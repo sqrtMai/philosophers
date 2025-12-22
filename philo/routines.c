@@ -37,14 +37,14 @@ void *check_death(void *philos)
 			{
 				if ((current_time - philo->table->start_time) >= philo->table->rules.time_to_die)
 				{
-					return (philo->dead = 1, philo->table->has_someone_died = 1, printf("%lld %d has died\n", get_current_time() - philo->table->start_time,
+					return (philo->dead = 1, philo->table->has_someone_died = 1, printf("%lld %d died\n", get_current_time() - philo->table->start_time,
 						 philo->index + 1), (void *)1);
 				}
 			}
 		else
 			{
 				if (current_time - philo->last_meal >= philo->table->rules.time_to_die)
-					return (philo->dead = 1, philo->table->has_someone_died = 1, printf("%lld %d has died\n", get_current_time() - philo->table->start_time,
+					return (philo->dead = 1, philo->table->has_someone_died = 1, printf("%lld %d died\n", get_current_time() - philo->table->start_time,
 						philo->index + 1), (void *) 1);
 			}
 		philo = philo->next;
@@ -86,10 +86,11 @@ void *take_forks(void *philos)
 	t_philo *philo;
 
 	philo = (t_philo *)philos;
+
 	if (*philo->fork1 == 1 || *philo->fork2 == 1)
 		printf("%lld %d is thinking\n", get_current_time() - philo->table->start_time,
 			philo->index + 1);
-
+	//printf("%d fork1 = %d, fork2 = %d\n", philo->index + 1, *philo->fork1, *philo->fork2);
 	pthread_mutex_lock(&philo->table->fork_lock);
 	*philo->fork1 = 1;
 	printf("%lld %d has taken a fork\n", get_current_time() - philo->table->start_time,

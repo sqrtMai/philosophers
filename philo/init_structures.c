@@ -62,7 +62,7 @@ t_philo *init_philosophers(t_table *table)
 		if (i == 0)
 		{
 			head = philo;
-			philo->fork1 = &philo->table->fork[philo->table->rules.number_of_philosophers];
+			philo->fork1 = &philo->table->fork[philo->table->rules.number_of_philosophers - 1];
 			philo->fork2 = &philo->table->fork[0];
 		}
 		else
