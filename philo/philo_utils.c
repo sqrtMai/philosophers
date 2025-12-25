@@ -34,7 +34,7 @@ int	ft_atoi(char *str)
 }
 
 
-long long get_current_time(void)
+long long g_time(void)
 {
 	struct timeval	current_time;
 	gettimeofday(&current_time, NULL);

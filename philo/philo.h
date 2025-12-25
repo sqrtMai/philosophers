@@ -10,24 +10,25 @@
 
 typedef struct s_rules
 {
-	int	number_of_philosophers;
-	int	time_to_die;
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	number_of_each_time;
-	int six_args;
+	long	p_number;
+	long	t_die;
+	long	time_to_eat;
+	long	time_to_sleep;
+	long	meal_max;
+	long six_args;
 }	t_rules;
 
 typedef struct s_table
 {
-	int				*fork;
-	int				has_someone_died;
+	pthread_mutex_t *fork_lock;
+	pthread_mutex_t	meal;
+	int				dead;
 	t_rules 		rules;
-	long long		start_time;
-	long long		time;
+	long long		start;
+	//long long		time;
 	pthread_t		update_time;
 	pthread_t		death;
-	pthread_mutex_t fork_lock;
+	pthread_mutex_t check_death;
 }		t_table;
 
 typedef struct s_philo
@@ -35,19 +36,18 @@ typedef struct s_philo
 	pthread_t		thread;
 
 	long long		last_meal;
-	int				*fork1;
-	int				*fork2;
-	int				index;
-	int				dead;
+	int				meal_nbr;
+	pthread_mutex_t	*fork1_lock;
+	pthread_mutex_t	*fork2_lock;
+	int				i;
 	t_table			*table;
 	struct s_philo *next;
 }	t_philo;
-
 
 t_philo *init_data(int argc, char **argv);
 int	ft_atoi(char *str);
 void *update_time(void *tabl);
 void *take_forks(void *philos);
 void *check_death(void *philos);
-long long get_current_time(void);
+long long g_time(void);
 #endif
