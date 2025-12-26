@@ -16,6 +16,8 @@ t_table *init_table(int argc, char **argv)
 
 	table = malloc(sizeof(t_table));
 	table->rules.p_number = ft_atoi(argv[1]);
+	if (table->rules.p_number <= 1)
+		exit(1);
 	table->rules.t_die = ft_atoi(argv[2]);
 	table->rules.time_to_eat = ft_atoi(argv[3]);
 	table->rules.time_to_sleep = ft_atoi(argv[4]);
@@ -26,6 +28,7 @@ t_table *init_table(int argc, char **argv)
 	}
 	table->update_time = 0;
 	table->dead = 0;
+	table->go = 0;
 	table->fork_lock = malloc(sizeof(pthread_mutex_t) * table->rules.p_number);
 	if (!table->fork_lock)
 		return (NULL);
@@ -62,11 +65,6 @@ t_philo *init_philosophers(t_table *table)
 			philo->fork1_lock = &philo->table->fork_lock[i - 1];
 			philo->fork2_lock = &philo->table->fork_lock[i];
 		}
-		// if (i == table->rules.p_number - 1)
-		// {
-		// 	philo->fork1_lock = &philo->table->fork_lock[i];
-		// 	philo->fork2_lock = &philo->table->fork_lock[i - 1];
-		// }
 		philo->i = i++;
 		if (i < table->rules.p_number)
 		{

@@ -32,6 +32,7 @@ void init_mutex(t_philo *philo)
 	i = 0;
 	pthread_mutex_init(&philo->table->check_death, NULL);
 	pthread_mutex_init(&philo->table->meal, NULL);
+	pthread_mutex_init(&philo->table->go_m, NULL);
 	while (i < philo->table->rules.p_number)
 		pthread_mutex_init(&philo->table->fork_lock[i++], NULL);
 }
@@ -42,6 +43,8 @@ void destroy_mutex(t_philo *philo)
 
 	i = 0;
 	pthread_mutex_destroy(&philo->table->check_death);
+	pthread_mutex_destroy(&philo->table->meal);
+	pthread_mutex_destroy(&philo->table->go_m);
 	while (i < philo->table->rules.p_number)
 		pthread_mutex_destroy(&philo->table->fork_lock[i++]);
 }
@@ -53,43 +56,38 @@ void init_threads(t_philo *philo)
 
 	i = 0;
 	init_mutex(philo);
-	philo->table->start = g_time();
+	//pthread_mutex_lock(&philo->table->go_m);
 	pthread_create(&philo->table->death, NULL, check_death, philo);
-	while (i < philo->table->rules.p_number)
+	while (i++ < philo->table->rules.p_number)
 	{
-		if (i + 1 % 2)
-			usleep(500);
 		pthread_create(&philo->thread,
-			NULL, take_forks, philo);
+			NULL, start_routine, philo);
 		philo = philo->next;
-		i++;
 	}
+	philo->table->go = 1;
+	//pthread_mutex_unlock(&philo->table->go_m);
 }
 
 int main(int argc, char **argv)
 {
 	t_philo *philosophers;
+	int i;
 
 	if (argc < 5 || argc > 6)
 		return 1;
 	// if (check_args(argv))
 	// 	return (printf("error"), 1);
+	i = 0;
 	philosophers = init_data(argc, argv);
-	// while (1)
-	// {
-	// 	printf("%d\n", philosophers->index);
-	// 	philosophers = philosophers->next;
-	// }
 
 	init_threads(philosophers);
 	pthread_join(philosophers->table->death, NULL);
-	int i = 0;
 	while (i < philosophers->table->rules.p_number)
 	{
 		pthread_join(philosophers->thread, NULL);
 		i++;
 		philosophers = philosophers->next;
 	}
-	//destroy_mutex(philosophers);
+	destroy_mutex(philosophers);
 	return 0;
 }
